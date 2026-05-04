@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Surprise</title>
+    <style>
+        :root {
+            --pink-bg: #ffc0cb;
+            --dark-pink: #ff69b4;
+            --glass: rgba(255, 255, 255, 0.7);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Rounded MT Bold', sans-serif;
+            background-color: var(--pink-bg);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        /* Slow Falling Emojis */
+        #emoji-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .emoji {
+            position: absolute;
+            top: -100px;
+            font-size: 3rem;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        /* Bold & Big Timer */
+        #timer-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--dark-pink);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            font-size: 1.8rem; /* Bigger */
+            font-weight: 900;  /* Bolder */
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        section {
+            display: none;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        section.active { display: flex; }
+
+        /* Word Wrap Fix & Typewriter Style */
+        .para-card {
+            margin-bottom: 700px;
+            background: var(--glass);
+            padding: 50px;
+            border-radius: 40px;
+            font-size: 2.5rem;
+            max-width: 800px;
+            border: 5px solid white;
+            opacity: 0;
+            word-wrap: break-word; /* Ensures words don't break mid-letter */
+            overflow-wrap: break-word;
+            display: inline-block;
+        }
+
+        .fade-in { opacity: 1 !important; transition: opacity 1s ease-in; }
+
+        .word {
+            display: inline-block;
+            white-space: nowrap; /* Keeps individual words together */
+            margin-right: 12px;
+            opacity: 0;
+            animation: wordFade 0.5s forwards;
+        }
+
+        @keyframes wordFade {
+            to { opacity: 1; }
+        }
+
+        /* Giant Cake Styling */
+        #cake-section { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .giant-cake { font-size: 20rem; position: relative; line-height: 1; }
+        .flame { position: absolute; top: -100px; left: 50%; transform: translateX(-50%); font-size: 8rem; animation: flicker 0.1s infinite alternate; }
+        
+        @keyframes flicker {
+            from { opacity: 0.8; transform: translateX(-50%) scale(1); }
+            to { opacity: 1; transform: translateX(-50%) scale(1.2); }
+        }
+
+        /* Final Page Layout */
+        .image-row { display: flex; gap: 20px; justify-content: center; width: 90%; margin: 30px 0; }
+        .image-row img { width: 45%; border-radius: 20px; border: 10px solid white; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .end-para { font-size: 2rem; margin: 40px 0; max-width: 700px; background: white; padding: 30px; border-radius: 20px; }
+
+        .btn {
+            background: var(--dark-pink);
+            color: white;
+            border: 4px solid white;
+            padding: 20px 50px;
+            font-size: 1.8rem;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="emoji-container"></div>
+    <div id="timer-header">HAPPY BIRTHDAY!</div>
+
+    <section id="page1" class="active">
+        <h1 style="font-size: 3rem; margin-bottom: 30px;">A many more happy returns of the day my dear!</h1>
+        <button class="btn" onclick="startSurprise()">Click Here</button>
+    </section>
+
+    <section id="page2">
+        <div class="scrolling-content">
+            <div class="para-card" id="para1" data-text="Every year that passes is just another reminder of how lucky I am to know you. You bring so much light into the lives of everyone around you."></div>
+            <div class="para-card" id="para2" data-text="Your journey since 2008 has been nothing short of amazing. Watching you grow and achieve your dreams is a true joy that I cherish every day."></div>
+            <div class="para-card" id="para3" data-text="On this special day, I hope you realize how truly wonderful you are. May your year be filled with as much happiness as you give to the world."></div>
+            
+            <div id="cake-section">
+                <h1 id="blow-msg" style="font-size: 4rem; color: white;">Blow in 3...</h1>
+                <div class="giant-cake">
+                    <div id="flame" class="flame">🔥</div>
+                    🎂
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="page3">
+        <div class="end-para">You have such a beautiful soul. Let's keep making memories!</div>
+        <div class="image-row">
+            <img src="https://via.placeholder.com/500" alt="Memory 1">
+            <img src="https://via.placeholder.com/500" alt="Memory 2">
+        </div>
+        <div class="end-para">Wishing you a life full of adventure, laughter, and endless cake! Happy Birthday! ❤️</div>
+    </section>
+
+    <script>
+        const bday = new Date('August 12, 2008 00:00:00');
+        const emojis = ['🎉', '🎊', '🎂', '💖', '✨', '🎈', '🎁'];
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - bday;
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / 1000 / 60) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            document.getElementById('timer-header').innerText = `${d} Days | ${h}h | ${m}m | ${s}s Alive`;
+        }
+
+        function createEmoji() {
+            const container = document.getElementById('emoji-container');
+            const e = document.createElement('div');
+            e.className = 'emoji';
+            e.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            e.style.left = Math.random() * 100 + 'vw';
+            // SLOWER FALLING: Duration between 4 and 7 seconds
+            e.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            container.appendChild(e);
+            setTimeout(() => e.remove(), 7000);
+        }
+
+        // Logic to fade words in one by one (Fixes "Amazing" break)
+        function typeWriter(element) {
+            const text = element.getAttribute('data-text');
+            const words = text.split(' ');
+            element.innerHTML = '';
+            element.classList.add('fade-in');
+            
+            words.forEach((word, i) => {
+                const span = document.createElement('span');
+                span.className = 'word';
+                span.innerText = word;
+                span.style.animationDelay = `${i * 0.15}s`;
+                element.appendChild(span);
+            });
+        }
+
+        function startSurprise() {
+            document.getElementById('page1').classList.remove('active');
+            document.getElementById('page2').classList.add('active');
+            document.getElementById('timer-header').style.display = 'block';
+
+            setInterval(updateTimer, 1000);
+            setInterval(createEmoji, 300);
+
+            // Auto-Scroll Logic (Moderately Paced)
+            let autoScroll = setInterval(() => {
+                window.scrollBy(0, 1.8);
+                
+                // Trigger paras with 3 second gap check (handled by scroll position)
+                document.querySelectorAll('.para-card').forEach((p, idx) => {
+                    const rect = p.getBoundingClientRect();
+                    // Each para starts fading when it's in view
+                    if(rect.top < window.innerHeight * 0.75 && !p.classList.contains('fade-in')) {
+                        // The "3 second delay" for the first message is handled here
+                        const delay = idx === 0 ? 3000 : 0; 
+                        setTimeout(() => typeWriter(p), delay);
+                    }
+                });
+
+                const cakeRect = document.getElementById('cake-section').getBoundingClientRect();
+                if (cakeRect.top <= 10) {
+                    clearInterval(autoScroll);
+                    startBlowing();
+                }
+            }, 25);
+        }
+
+        function startBlowing() {
+            let countdown = 3;
+            const msg = document.getElementById('blow-msg');
+            const timer = setInterval(() => {
+                countdown--;
+                if(countdown > 0) {
+                    msg.innerText = `Blow in ${countdown}...`;
+                } else {
+                    msg.innerText = "POOF! Let's see our memories together!";
+                    document.getElementById('flame').style.display = 'none';
+                    clearInterval(timer);
+                    setTimeout(() => {
+                        document.getElementById('page2').classList.remove('active');
+                        document.getElementById('page3').classList.add('active');
+                        window.scrollTo(0,0);
+                    }, 3000);
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+  </html>
